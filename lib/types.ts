@@ -1,9 +1,11 @@
 // --- Type Definitions for the Application ---
 
-// Defines the possible states a resume submission can be in
 export type ResumeStatus = 'Approved' | 'Needs Revision' | 'Rejected' | 'Pending';
 
-// Represents the structure of a single resume submission record
+export interface StatusBadgeProps {
+  status: ResumeStatus;
+}
+
 export interface Resume {
   id: string;
   file_path: string;
@@ -12,4 +14,15 @@ export interface Resume {
   notes: string | null;
   created_at: string; // ISO date string
   file_name: string;
+}
+
+export interface ResumeListProps {
+  resumes: Resume[];
+}
+
+export interface EmptyStateProps {
+  title: string;
+  message: string;
+  buttonText: string;
+  buttonHref: string;
 }

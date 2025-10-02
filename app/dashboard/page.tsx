@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ResumeStatus, Resume } from '@/lib/types'
+import { Resume } from '@/lib/types'
+import { ResumeList } from '@/components/ResumeList'
+import { EmptyState } from '@/components/EmptyState'
 // In a real app, you would import the Supabase client
 // import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
@@ -34,43 +36,6 @@ const mockUserResumes: Resume[] = [
     file_name: 'Data_Analyst_Resume.pdf'
   },
 ];
-
-// --- Helper Components ---
-
-interface StatusBadgeProps {
-  status: ResumeStatus;
-}
-
-// This can be moved to its own file in /components
-const StatusBadge = ({ status }: StatusBadgeProps) => {
-  const baseClasses = "px-3 py-1 text-xs font-bold leading-none rounded-full";
-  
-  const statusConfig: Record<ResumeStatus, { classes: string; label: string }> = {
-    'Approved': {
-      classes: 'bg-green-100 text-green-800',
-      label: 'Approved'
-    },
-    'Needs Revision': {
-      classes: 'bg-yellow-100 text-yellow-800',
-      label: 'Needs Revision'
-    },
-    'Rejected': {
-      classes: 'bg-red-100 text-red-800',
-      label: 'Rejected'
-    },
-    'Pending': {
-      classes: 'bg-gray-200 text-gray-800 animate-pulse',
-      label: 'Pending Review'
-    },
-  };
-
-  const config = statusConfig[status];
-
-  return <span className={`${baseClasses} ${config.classes}`}>{config.label}</span>;
-};
-
-
-// --- Main Dashboard Page Component ---
 
 export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
@@ -110,21 +75,25 @@ export default function DashboardPage() {
     fetchResumes();
   }, []);
 
-  if (loading) {
+  const renderContent = () => {
+    if (loading) {
+      return <div className="text-center p-10"><p className="text-gray-600">Loading your dashboard...</p></div>;
+    }
+    if (error) {
+      return <div className="text-center p-10 bg-red-50 border border-red-200 rounded-lg"><p className="text-red-700 font-semibold">{error}</p></div>;
+    }
+    if (resumes.length > 0) {
+      return <ResumeList resumes={resumes} />;
+    }
     return (
-        <div className="text-center p-10">
-            <p className="text-gray-600">Loading your dashboard...</p>
-        </div>
+      <EmptyState 
+        title="No Resumes Found"
+        message="You haven't uploaded any resumes yet."
+        buttonText="Upload Your First Resume"
+        buttonHref="/dashboard/upload"
+      />
     );
-  }
-
-  if (error) {
-    return (
-        <div className="text-center p-10 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 font-semibold">{error}</p>
-        </div>
-    );
-  }
+  };
   
   return (
     // Note: The main layout (header, nav) would typically be in a layout.tsx file
@@ -140,41 +109,7 @@ export default function DashboardPage() {
       </header>
       
       <main>
-        {resumes.length > 0 ? (
-          <div className="bg-white shadow-md rounded-lg overflow-hidden">
-            <ul className="divide-y divide-gray-200">
-              {resumes.map((resume) => (
-                <li key={resume.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex-grow">
-                        <p className="font-semibold text-lg text-gray-800 truncate">{resume.file_name}</p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Submitted on: {new Date(resume.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                        </p>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <StatusBadge status={resume.status} />
-                    </div>
-                  </div>
-                  {resume.notes && (
-                    <div className="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Reviewer Feedback:</p>
-                      <p className="text-sm text-gray-600 whitespace-pre-wrap font-mono">"{resume.notes}"</p>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <div className="text-center py-16 px-6 bg-white rounded-lg shadow-md border border-dashed">
-            <h3 className="text-xl font-semibold text-gray-800">No Resumes Found</h3>
-            <p className="mt-2 text-gray-500">You haven't uploaded any resumes yet.</p>
-            <a href="/dashboard/upload" className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Upload Your First Resume
-            </a>
-          </div>
-        )}
+        {renderContent()}
       </main>
     </div>
   );
