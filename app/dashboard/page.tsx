@@ -1,21 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { ResumeStatus, Resume } from '@/lib/types'
 // In a real app, you would import the Supabase client
 // import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
-// --- Type Definitions ---
-// This would typically be in a central types file, e.g., /lib/types.ts
-type ResumeStatus = 'Approved' | 'Needs Revision' | 'Rejected' | 'Pending';
-
-interface Resume {
-  id: string;
-  file_path: string;
-  status: ResumeStatus;
-  score: number | null;
-  notes: string | null;
-  created_at: string; // ISO date string
-  file_name: string;
-}
 
 // --- Mock Data (replace with actual Supabase fetch) ---
 const mockUserResumes: Resume[] = [
