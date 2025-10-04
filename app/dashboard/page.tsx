@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Resume } from '@/lib/types'
 import { ResumeList } from '@/components/ResumeList'
 import { EmptyState } from '@/components/EmptyState'
-// In a real app, you would import the Supabase client
-// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
 
 // --- Mock Data (replace with actual Supabase fetch) ---
 const mockUserResumes: Resume[] = [
@@ -42,6 +42,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   useEffect(() => {
     // This is where you would fetch data from Supabase
     const fetchResumes = async () => {
@@ -72,8 +74,38 @@ export default function DashboardPage() {
       }
     };
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        const UpdateUserTable = async () => {
+          const user = session.user
+          const { data: ExistingProfile, error: selectError } = await supabase
+            .from('users') 
+            .select('id')
+            .eq('id', user.id)
+            .maybeSingle();
+
+          if (!ExistingProfile) {
+            const { error: insertError } = await supabase
+              .from('users')
+              .insert({
+                id: user.id,
+                email: user.email,
+              });
+          }
+        }
+
+        UpdateUserTable();
+      } else {
+        router.replace('/')
+      }
+    });
+
     fetchResumes();
-  }, []);
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const renderContent = () => {
     if (loading) {
