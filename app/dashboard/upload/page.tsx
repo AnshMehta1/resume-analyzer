@@ -2,51 +2,11 @@
 import { supabase } from '@/lib/supabaseClient';
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
-
-// --- Helper Icon Components ---
-const UploadCloudIcon = () => (
-  <svg
-    className="w-12 h-12 mx-auto text-gray-400"
-    stroke="currentColor"
-    fill="none"
-    viewBox="0 0 48 48"
-    aria-hidden="true"
-  >
-    <path
-      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const FileIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-  </svg>
-);
-
-const CheckCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const XCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
-
-const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-  </svg>
-);
-
-
-// --- Main Upload Page Component ---
+import { UploadCloudIcon } from '@/components/icons/UploadCloudIcon';
+import { FileIcon } from '@/components/icons/FileIcon';
+import { CheckCircleIcon } from '@/components/icons/CheckCircleIcon';
+import { XCircleIcon } from '@/components/icons/XCircleIcon';
+import { ArrowLeftIcon } from '@/components/icons/ArrowLeftIcon';
 
 export default function ResumeUploadPage() {
   const [file, setFile] = useState<File | null>(null);
