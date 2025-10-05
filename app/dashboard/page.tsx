@@ -4,15 +4,12 @@ import { Resume } from '@/lib/types'
 import { ResumeList } from '@/components/ResumeList'
 import { EmptyState } from '@/components/EmptyState'
 import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
 
 
 export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -40,38 +37,9 @@ export default function DashboardPage() {
       }
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        const UpdateUserTable = async () => {
-          const user = session.user
-          const { data: ExistingProfile, error: selectError } = await supabase
-            .from('users')
-            .select('id')
-            .eq('id', user.id)
-            .maybeSingle();
-
-          if (!ExistingProfile) {
-            const { error: insertError } = await supabase
-              .from('users')
-              .insert({
-                id: user.id,
-                email: user.email,
-              });
-          }
-        }
-
-        UpdateUserTable();
-      } else {
-        router.replace('/')
-      }
-    });
-
     fetchResumes();
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
+  }, []);
 
   const renderContent = () => {
     if (loading) {
