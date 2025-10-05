@@ -26,3 +26,19 @@ export interface EmptyStateProps {
   buttonText: string;
   buttonHref: string;
 }
+
+export interface UserProfile {
+  email: string | null;
+  username: string | null;
+  total_resumes: number | null;
+}
+
+export interface ResumeWithProfile extends Resume {
+  users: Pick<UserProfile, 'email' | 'username'> | null;
+}
+
+export interface ResumeTableProps {
+  resumes: ResumeWithProfile[];
+  onSelectResume: (resume: ResumeWithProfile) => void;
+  selectedResumeId?: string;
+}
