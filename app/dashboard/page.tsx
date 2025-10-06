@@ -5,6 +5,8 @@ import { ResumeList } from '@/components/ResumeList'
 import { EmptyState } from '@/components/EmptyState'
 import { supabase } from '@/lib/supabaseClient'
 import { UserProfileCard } from '@/components/UserProfileCard';
+import { AuthGuard } from '@/components/AuthGuard';
+import { LogoutButton } from '@/components/Logout';
 
 
 export default function DashboardPage() {
@@ -34,7 +36,7 @@ export default function DashboardPage() {
             .select('*')
             .eq('id', user.id)
             .single();
-          
+
           if (profileError) {
             throw profileError
           }
@@ -83,27 +85,32 @@ export default function DashboardPage() {
 
   return (
     // Note: The main layout (header, nav) would typically be in a layout.tsx file
-    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Candidate Dashboard</h1>
-          <p className="mt-1 text-md text-gray-600">Track the status of your resume submissions.</p>
+    <AuthGuard>
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Candidate Dashboard</h1>
+            <p className="mt-1 text-md text-gray-600">Track the status of your resume submissions.</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="/dashboard/upload" className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+              Upload New Resume
+            </a>
+            <LogoutButton />
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <aside className="lg:col-span-1 lg:sticky lg:top-8 self-start">
+            <UserProfileCard profile={profile} resumeCount={resumes.length} loading={loading} />
+          </aside>
+
+          <main className="lg:col-span-3">
+            {renderContent()}
+          </main>
         </div>
-        <a href="/dashboard/upload" className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-          Upload New Resume
-        </a>
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <aside className="lg:col-span-1 lg:sticky lg:top-8 self-start">
-          <UserProfileCard profile={profile} resumeCount={resumes.length} loading={loading} />
-        </aside>
-
-        <main className="lg:col-span-3">
-          {renderContent()}
-        </main>
       </div>
-    </div>
+    </AuthGuard>
   );
 }
 
