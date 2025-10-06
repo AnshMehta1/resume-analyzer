@@ -55,7 +55,18 @@ const ReviewPanel = ({ resume, onUpdate }: any) => {
 
             if (updateError) throw updateError;
 
-            setSuccess("Resume updated successfully!");
+            await fetch("/api/notify-user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: resume.users?.email, 
+                    status,
+                    score,
+                    notes,
+                }),
+            });
+
+            setSuccess("Resume updated and email sent successfully!");
             setTimeout(onUpdate, 1000); // Refresh list after a short delay
         } catch (err: any) {
             setError(err.message || "Failed to update resume.");
