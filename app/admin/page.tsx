@@ -5,6 +5,8 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ResumeTable } from '../../components/ResumeTable';
 import { ReviewPanel } from '../../components/ReviewPanel';
 import { ResumeWithProfile } from '../../lib/types';
+import { AdminAuthGuard } from '@/components/AdminAuthGuard';
+import { LogoutButton } from '@/components/LogoutButton';
 
 function AdminDashboard() {
   const [resumes, setResumes] = useState<ResumeWithProfile[]>([]);
@@ -16,7 +18,6 @@ function AdminDashboard() {
   const fetchAllResumes = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all resumes and join with the users table to get candidate emails
       const { data, error } = await supabase
         .from('resumes')
         .select(`
@@ -56,17 +57,20 @@ function AdminDashboard() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-        <p className="mt-1 text-md text-gray-600">Review and manage all candidate submissions.</p>
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
+          <p className="mt-1 text-md text-gray-600">Review and manage all candidate submissions.</p>
+        </div>
+        <LogoutButton />
       </header>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {resumes.length > 0 ? (
-            <ResumeTable 
-              resumes={resumes} 
-              onSelectResume={handleSelectResume} 
+            <ResumeTable
+              resumes={resumes}
+              onSelectResume={handleSelectResume}
               selectedResumeId={selectedResume?.id}
             />
           ) : (
@@ -76,7 +80,7 @@ function AdminDashboard() {
             </div>
           )}
         </div>
-        
+
         <aside className="lg:col-span-1">
           {selectedResume ? (
             <ReviewPanel resume={selectedResume} onUpdate={fetchAllResumes} />
@@ -94,6 +98,8 @@ function AdminDashboard() {
 
 export default function AdminPage() {
   return (
-    <AdminDashboard />
+    <AdminAuthGuard>
+      <AdminDashboard />
+    </AdminAuthGuard>
   );
 }

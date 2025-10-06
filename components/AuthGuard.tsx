@@ -19,16 +19,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkUserSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        router.replace('/');
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    
   }, [supabase]);
 
   if (loading) {

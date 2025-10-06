@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { supabase } from '@/lib/supabaseClient'
 import { UserProfileCard } from '@/components/UserProfileCard';
 import { AuthGuard } from '@/components/AuthGuard';
-import { LogoutButton } from '@/components/Logout';
+import { LogoutButton } from '@/components/LogoutButton';
 
 
 export default function DashboardPage() {
