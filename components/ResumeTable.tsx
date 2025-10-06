@@ -22,7 +22,7 @@ const ResumeTable: React.FC<ResumeTableProps> = ({ resumes, onSelectResume, sele
                 className={`cursor-pointer transition-colors ${selectedResumeId === resume.id ? 'bg-indigo-50' : 'hover:bg-gray-50'}`}
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900 truncate">{resume.users?.username || 'N/A'}</div>
+                  <div className="text-sm font-medium text-gray-900 truncate">{resume.users?.name || 'N/A'}</div>
                   <div className="text-sm text-gray-500 truncate">{resume.users?.email}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

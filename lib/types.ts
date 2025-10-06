@@ -29,7 +29,7 @@ export interface EmptyStateProps {
 
 export interface UserProfile {
   email: string | null;
-  username: string | null;
+  name: string | null;
 }
 
 export interface UserProfileCardProps {
@@ -39,7 +39,7 @@ export interface UserProfileCardProps {
 }
 
 export interface ResumeWithProfile extends Resume {
-  users: Pick<UserProfile, 'email' | 'username'> | null;
+  users: Pick<UserProfile, 'email' | 'name'> | null;
 }
 
 export interface ResumeTableProps {

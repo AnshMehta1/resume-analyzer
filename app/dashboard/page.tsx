@@ -50,9 +50,16 @@ export default function DashboardPage() {
       }
     };
 
-    fetchResumesAndProfile();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        fetchResumesAndProfile();
+      }
+    });
 
-  }, []);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const renderContent = () => {
     if (loading) {

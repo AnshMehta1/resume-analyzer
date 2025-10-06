@@ -9,6 +9,8 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile, resumeCount,
         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
         <div className="border-t border-gray-200 my-4"></div>
         <div className="h-4 bg-gray-200 rounded w-full"></div>
+        <div className="border-t border-gray-200 my-4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
       </div>
     );
   }
@@ -19,7 +21,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile, resumeCount,
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-      <h2 className="text-xl font-bold text-gray-800 truncate">{profile.username || 'Welcome!'}</h2>
+      <h2 className="text-xl font-bold text-gray-800 truncate">{profile.name || 'Welcome!'}</h2>
       <p className="text-sm text-gray-500 mt-1 truncate">{profile.email}</p>
       
       <div className="mt-4 border-t border-gray-200 pt-4">
@@ -29,6 +31,12 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ profile, resumeCount,
             <dd className="font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">{resumeCount}</dd>
           </div>
         </dl>
+      </div>
+
+      <div className="mt-4 border-t border-gray-200 pt-4">
+        <a href="/dashboard/profile" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors duration-150">
+          Edit Profile
+        </a>
       </div>
     </div>
   );
