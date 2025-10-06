@@ -1,43 +1,56 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Resume } from '@/lib/types'
+import { Resume, UserProfile } from '@/lib/types'
 import { ResumeList } from '@/components/ResumeList'
 import { EmptyState } from '@/components/EmptyState'
 import { supabase } from '@/lib/supabaseClient'
+import { UserProfileCard } from '@/components/UserProfileCard';
 
 
 export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchResumes = async () => {
+    const fetchResumesAndProfile = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (user) {
-          const { data, error } = await supabase
+          const { data: resumeData, error: resumeError } = await supabase
             .from('resumes')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
-          if (error) {
-            throw error;
+          if (resumeError) {
+            throw resumeError;
           }
 
-          setResumes(data as Resume[]);
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          if (profileError) {
+            throw profileError
+          }
+
+          setResumes(resumeData as Resume[]);
+          setProfile(profileData);
         }
       } catch (err: any) {
-        setError('Failed to load your resume submissions. Please try again later.');
+        setError('Failed to load your resume submissions or profile. Please try again later.');
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchResumes();
+    fetchResumesAndProfile();
 
   }, []);
 
@@ -74,9 +87,15 @@ export default function DashboardPage() {
         </a>
       </header>
 
-      <main>
-        {renderContent()}
-      </main>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <aside className="lg:col-span-1 lg:sticky lg:top-8 self-start">
+          <UserProfileCard profile={profile} resumeCount={resumes.length} loading={loading} />
+        </aside>
+
+        <main className="lg:col-span-3">
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 }

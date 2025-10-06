@@ -30,7 +30,12 @@ export interface EmptyStateProps {
 export interface UserProfile {
   email: string | null;
   username: string | null;
-  total_resumes: number | null;
+}
+
+export interface UserProfileCardProps {
+  profile: UserProfile | null;
+  resumeCount: number | null;
+  loading: boolean;
 }
 
 export interface ResumeWithProfile extends Resume {
