@@ -31,9 +31,18 @@ function AdminDashboard() {
 
       if (error) throw error;
       setResumes(data as ResumeWithProfile[]);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch resumes.');
-    } finally {
+    } catch (err: unknown) {
+      let message = 'Failed to fetch resumes.';
+
+      if (err instanceof Error) {
+        message = err.message;
+      } else {
+        message = String((err as { message?: string }).message ?? message);
+      }
+
+      setError(message);
+    }
+    finally {
       setLoading(false);
     }
   }, [supabase]);

@@ -94,10 +94,17 @@ export default function ResumeUploadPage() {
         setUploadSuccess(true);
         setFile(null);
       }
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred. Please try again.');
-      console.error(err);
-    } finally {
+    } catch (err: unknown) {
+      console.error("Unexpected error:", err);
+
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'An unexpected error occurred. Please try again.';
+
+      setError(message);
+    }
+    finally {
       setUploading(false);
     }
   };

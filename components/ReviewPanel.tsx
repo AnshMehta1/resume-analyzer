@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { ResumeWithProfile } from "@/lib/types";
+import { ResumeWithProfile, ResumeStatus } from "@/lib/types";
 
 const ReviewPanel = ({ resume, onUpdate }: { resume: ResumeWithProfile, onUpdate: () => void }) => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -24,14 +24,26 @@ const ReviewPanel = ({ resume, onUpdate }: { resume: ResumeWithProfile, onUpdate
         const downloadPdfUrl = async () => {
             setLoading(true);
             try {
-                const { data, error }: any = await supabase.storage
+                const { data, error } = await supabase.storage
                     .from("resumes")
                     .createSignedUrl(resume.file_path, 60); // Create a secure URL valid for 60 seconds
 
                 if (error) throw error;
+
+                if (!data?.signedUrl) {
+                    throw new Error("Signed URL not returned from storage.");
+                }
+
                 setPdfUrl(data.signedUrl);
-            } catch {
-                setError("Failed to load resume link.");
+            } catch (err: unknown) {
+                console.error("Error fetching signed URL:", err);
+
+                const message =
+                    err instanceof Error
+                        ? err.message
+                        : "Failed to load resume link.";
+
+                setError(message);
             } finally {
                 setLoading(false);
             }
@@ -69,9 +81,15 @@ const ReviewPanel = ({ resume, onUpdate }: { resume: ResumeWithProfile, onUpdate
 
             setSuccess("Resume updated and email sent successfully!");
             setTimeout(onUpdate, 1000);
-        } catch (err: any) {
-            setError(err.message || "Failed to update resume.");
-        } finally {
+        } catch (err: unknown) {
+            const message =
+                err instanceof Error
+                    ? err.message
+                    : "Failed to update resume.";
+
+            setError(message);
+        }
+        finally {
             setLoading(false);
         }
     };
@@ -102,7 +120,7 @@ const ReviewPanel = ({ resume, onUpdate }: { resume: ResumeWithProfile, onUpdate
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <div>
                         <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="status" value={status} onChange={(e) => setStatus(e.target.value as any)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ResumeStatus)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                             {status === 'Pending' && <option value="Pending" disabled>Pending</option>}
                             <option value="Approved">Approved</option>
                             <option value="Needs Revision">Needs Revision</option>

@@ -30,12 +30,20 @@ export default function LoginPage() {
                 content: 'Check your email for the magic link to sign in!',
             });
 
-        } catch (error: any) {
-            setMessage({
-                type: 'error',
-                content: error.message || 'An unexpected error occurred. Please try again.',
-            });
-        } finally {
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setMessage({
+                    type: 'error',
+                    content: error.message,
+                });
+            } else {
+                setMessage({
+                    type: 'error',
+                    content: 'An unexpected error occurred. Please try again.',
+                });
+            }
+        }
+        finally {
             setLoading(false);
         }
     };

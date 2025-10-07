@@ -44,10 +44,16 @@ export default function DashboardPage() {
           setResumes(resumeData as Resume[]);
           setProfile(profileData);
         }
-      } catch (err: any) {
-        setError('Failed to load your resume submissions or profile. Please try again later.');
-        console.error(err);
-      } finally {
+      } catch (err: unknown) {
+        console.error("Unexpected error:", err);
+
+        setError(
+          err instanceof Error
+            ? `Failed to load your resume submissions or profile: ${err.message}`
+            : 'Failed to load your resume submissions or profile. Please try again later.'
+        );
+      }
+      finally {
         setLoading(false);
       }
     };

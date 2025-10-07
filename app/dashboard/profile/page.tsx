@@ -35,10 +35,16 @@ export default function ProfilePage() {
                         setName(data.name || '');
                     }
                 }
-            } catch (err: any) {
-                setError('Failed to load your profile data.');
-                console.error(err);
-            } finally {
+            } catch (err: unknown) {
+                console.error("Unexpected error:", err);
+
+                setError(
+                    err instanceof Error
+                        ? `Failed to load your profile data: ${err.message}`
+                        : 'Failed to load your profile data.'
+                );
+            }
+            finally {
                 setLoading(false);
             }
         };
@@ -61,9 +67,14 @@ export default function ProfilePage() {
                 if (updateError) throw updateError;
                 setSuccess('Your username has been updated successfully!');
             }
-        } catch (err: any) {
-            setError(err.message || 'An error occurred while saving your profile.');
-        } finally {
+        } catch (err: unknown) {
+            let message = 'An error occurred while saving your profile.';
+            if (err instanceof Error) {
+                message = err.message;
+            }
+            setError(message);
+        }
+        finally {
             setSaving(false);
         }
     };
