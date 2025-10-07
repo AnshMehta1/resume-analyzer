@@ -24,7 +24,7 @@ export const ResumeList = ({ resumes }: ResumeListProps) => {
           {resume.notes && (
             <div className="mt-4 pt-4 border-t border-gray-200 bg-gray-50 p-4 rounded-lg">
               <p className="text-sm font-semibold text-gray-700 mb-1">Reviewer Feedback:</p>
-              <p className="text-sm text-gray-600 whitespace-pre-wrap font-mono">"{resume.notes}"</p>
+              <p className="text-sm text-gray-600 whitespace-pre-wrap font-mono">{`"${resume.notes}"`}</p>
             </div>
           )}
         </div>
