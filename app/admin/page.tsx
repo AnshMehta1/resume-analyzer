@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/lib/supabaseClient';
 import { ResumeTable } from '../../components/ResumeTable';
 import { ReviewPanel } from '../../components/ReviewPanel';
 import { ResumeWithProfile } from '../../lib/types';
@@ -13,7 +13,6 @@ function AdminDashboard() {
   const [selectedResume, setSelectedResume] = useState<ResumeWithProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClientComponentClient();
 
   const fetchAllResumes = useCallback(async () => {
     setLoading(true);

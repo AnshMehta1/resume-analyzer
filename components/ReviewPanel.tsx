@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { ResumeWithProfile } from "@/lib/types";
 
-const ReviewPanel = ({ resume, onUpdate }: any) => {
+const ReviewPanel = ({ resume, onUpdate }: { resume: ResumeWithProfile, onUpdate: () => void }) => {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [status, setStatus] = useState(resume.status);
     const [score, setScore] = useState(resume.score || '');
@@ -59,7 +60,7 @@ const ReviewPanel = ({ resume, onUpdate }: any) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email: resume.users?.email, 
+                    email: resume.users?.email,
                     status,
                     score,
                     notes,
@@ -67,7 +68,7 @@ const ReviewPanel = ({ resume, onUpdate }: any) => {
             });
 
             setSuccess("Resume updated and email sent successfully!");
-            setTimeout(onUpdate, 1000); // Refresh list after a short delay
+            setTimeout(onUpdate, 1000);
         } catch (err: any) {
             setError(err.message || "Failed to update resume.");
         } finally {
